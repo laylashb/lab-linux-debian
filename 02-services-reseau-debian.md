@@ -33,79 +33,73 @@ Les services mis en place sont les suivants :
 - Samba (partage de fichiers)
 
 
-## DHCP 
-**DHCP** - **isc-dhcp-server (port 67/udp)** 
+## DHCP (isc-dhcp-server - port 67/UDP)
 
-**C'est quoi ?** Un service qui distribue automatiquement des adresses IP aux machines du réseau. 
+### C’est quoi ?
+Le DHCP (Dynamic Host Configuration Protocol) est un service qui attribue automatiquement une adresse IP et des paramètres réseau aux machines d’un réseau.
 
-**Sans DHCP** → chaque machine doit avoir une IP configurée à la main. 
+---
 
-**Avec DHCP** → une machine arrive sur le réseau, elle demande une IP, le serveur lui en donne une automatiquement dans la plage 192.168.100.150 → 200. 
+### Avec ou sans DHCP
+- **Sans DHCP** → chaque machine doit être configurée manuellement (IP fixe)
+- **Avec DHCP** → le serveur attribue automatiquement une IP disponible dans la plage définie
 
-## **DORA pour comprendre le fonctionnement DHCP** 
+Plage configurée :
+`192.168.100.150 → 192.168.100.200`
 
-Quand une machine arrive sur le réseau, il se passe 4 truc : Discover, offer, request, ack Envoi du client et des réponses du serveur : 
+---
 
-|-|DISCOVER  "Y'a un serveur DHCP ?"|
-|---|---|
-|-|OFFER|  "Oui ! Je t'ofre 192.168.100.150"|
-|-|REQUEST  "Ok je la prends !"|
-|-|ACK  "C'est confrmé, elle est à toi pr le moment"|
+### Fonctionnement (DORA)
+Lorsqu’un client rejoint le réseau, il suit 4 étapes :
 
-
-
-Attention, une IP DHCP n'est pas donnée pour toujours — elle est **louée** pour une durée. Après ce délai, la machine doit redemander. C'est pour éviter d'épuiser les IPs dispo. 
-
-**Ce qu'on a configuré :** 
-
-- Plage d'IP : 192.168.100.150 à 192.168.100.200 
-
-- Passerelle : 192.168.100.1 
-
-- DNS : 192.168.100.107 (notre serveur) 
-
-- Domaine : mondomaine.local 
+| Étape | Action | Description |
+|------|--------|-------------|
+| Discover | Client → réseau | "Y a-t-il un serveur DHCP ?" |
+| Offer | Serveur → client | "Je t’offre une IP" |
+| Request | Client → serveur | "Je prends cette IP" |
+| ACK | Serveur → client | "IP attribuée et confirmée" |
 
 
+### Remarque importante
+Une adresse IP DHCP n’est pas permanente : elle est **louée pour une durée limitée**.  
+À expiration, le client doit renouveler sa demande.
 
-## **DNS BIND9** 
 
-### **bind9 (port 53/tcp et 53/udp)** 
+### Configuration réalisée
+- Plage d’adresses : `192.168.100.150 - 200`
+- Passerelle : `192.168.100.1`
+- DNS : `192.168.100.107`
+- Domaine : `mondomaine.local`
 
-**C'est quoi ?** Un service qui traduit les noms en IPs (et inversement). 
 
-**Sans DNS** → tu dois taper 192.168.100.107 pour accéder au serveur. 
+## DNS (Bind9 - port 53 TCP/UDP)
+### Configuration des zones
 
-**Avec DNS** → tu peux taper serveur.mondomaine.local et ça pointe vers la bonne IP. 
+- Zone directe : `mondomaine.local` → nom → IP
+- Zone inverse : `100.168.192.in-addr.arpa` → IP → nom
 
-Serial  2026050601  → numéro de version (date + incrément) 
+### Paramètres de zone
+- Serial : `2026050601` → version de la zone
+- Refresh : `3600` → vérification toutes les heures
+- Retry : `1800` → nouvelle tentative après 30 min
+- Expire : `604800` → expiration après 7 jours sans contact
 
-Refresh 3600        → les esclaves vérifient toutes les heures 
 
-Retry   1800        → si échec, réessaie dans 30 min 
+### Résolution externe
+- Forwarders utilisés :
+  - `8.8.8.8`
+  - `1.1.1.1`
 
-Expire  604800      → après 7 jours sans contact, la zone expire 
-
-## **Ce qu'on a configuré :** 
-
-- Zone directe : mondomaine.local → résout les noms en IPs 
-
-- Zone inverse : 100.168.192.in-addr.arpa → résout les IPs en noms 
-
-- Forwarders : 8.8.8.8 et 1.1.1.1 pour les requêtes externes (Google, YouTube, etc.) 
-
+Permettent de résoudre les domaines externes (Google, etc.)
 
 
 ## NTP - chrony (port 123/udp) 
-
 **C'est quoi ?** Un service de synchronisation de l'heure. 
 
 **Pourquoi c'est important ?** Beaucoup de services (logs, certificats, Kerberos, VPN...) ont besoin que toutes les machines aient la même heure. Si l'heure diffère de quelques minutes, des services peuvent refuser de fonctionner. 
 
 **Ce qu'on a configuré :** 
-
 - Le serveur se synchronise sur time.cloudflare.com et pool.ntp.org 
-
 - Il est prêt à servir de référence pour les clients du réseau (allow 192.168.100.0/24) 
 
 
