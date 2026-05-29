@@ -109,10 +109,9 @@ Lors de l’installation, plusieurs dépendances ont été installées automatiq
 Ce TP a permis de prendre en main un environnement Debian et de maîtriser les bases essentielles de l’administration système.
 
 Les compétences développées concernent :
-
-l’utilisation du terminal Linux
-la gestion des fichiers et dossiers
-les diagnostics réseau
-l’installation et la configuration d’un service serveur
+- l’utilisation du terminal Linux 
+- la gestion des fichiers et dossiers
+- les diagnostics réseau
+- l’installation et la configuration d’un service serveur
 
 Ces notions constituent les bases indispensables pour l’administration d’un système Linux en environnement professionnel.
