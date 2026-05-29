@@ -1,14 +1,12 @@
 # Mise en place des services réseau sous Debian
 
 ## Objectif
-
 Le service DHCP (Dynamic Host Configuration Protocol) permet d’attribuer automatiquement des adresses IP ainsi que les paramètres réseau (passerelle, DNS, masque de sous-réseau) aux machines clientes.  
 Cela évite une configuration manuelle sur chaque poste du réseau.
 
 ---
 
 ## Installation
-
 Le service est installé via le gestionnaire de paquets :
     apt install isc-dhcp-server -y
 
@@ -21,8 +19,8 @@ L’interface réseau utilisée est définie dans :
 
 Paramètre configuré :
 INTERFACESv4="enp0s3"
-### Problème rencontré
 
+### Problème rencontré
 Le service ne démarrait pas initialement en raison d’une mauvaise configuration de l’interface réseau.
 
 ### Correction
@@ -32,7 +30,7 @@ Après vérification avec la commande ip a, l’interface correcte a été rense
     systemctl restart isc-dhcp-server
     systemctl enable isc-dhcp-server
 
-###Résultat
+### Résultat
 Le service DHCP fonctionne correctement et attribue des adresses IP dans la plage définie.
 
 
@@ -45,7 +43,6 @@ Le service DNS permet la résolution des noms de domaine en adresses IP et inver
     apt install bind9 bind9utils -y
 
 ## Configuration
-
 Les fichiers suivants ont été modifiés :
     /etc/bind/named.conf.options
     /etc/bind/named.conf.local
@@ -90,7 +87,6 @@ La commande chronyc sources permet de vérifier les serveurs utilisés.
 UFW (Uncomplicated Firewall) permet de filtrer les connexions réseau afin de sécuriser le serveur.
 
 ### Configuration
-
 Politique par défaut :
     ufw default deny incoming
     ufw default allow outgoing
@@ -109,14 +105,13 @@ Règles appliquées :
 
 
 ### SAMBA
-##Objectif
+## Objectif
 Samba permet le partage de fichiers entre systèmes Linux et Windows via le protocole SMB.
 
 ## Installation
     apt install samba smbclient -y
 
 ## Configuration
-
 Partage configuré :
     /srv/partage
 
@@ -124,7 +119,6 @@ Fichier de configuration :
     /etc/samba/smb.conf
 
 ## Utilisateur Samba
-
 Un utilisateur système a été créé puis ajouté à Samba :
     adduser utilisateur
     smbpasswd -a utilisateur
