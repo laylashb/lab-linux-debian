@@ -1,4 +1,4 @@
-# 🟦 Projet Linux Debian – Infrastructure réseau
+# Projet Linux Debian – Infrastructure réseau
 
 Par Layla Shabi
 Le 05/05/2026
