@@ -10,7 +10,6 @@ Cela évite une configuration manuelle sur chaque poste du réseau.
 ## Installation
 
 Le service est installé via le gestionnaire de paquets :
-```bash
     apt install isc-dhcp-server -y
 
 ### Configuration
