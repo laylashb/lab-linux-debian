@@ -88,7 +88,6 @@ La passerelle permet d’acheminer les paquets vers des réseaux externes lorsqu
 
 Avant toute installation, le système est mis à jour afin de garantir la sécurité et la compatibilité des paquets.
 
-```bash
 sudo apt update
 sudo apt upgrade
 
@@ -97,7 +96,6 @@ Cette étape permet de synchroniser la liste des paquets et d’installer les de
 ### 4.2 Installation du serveur Apache
 
 Le serveur web Apache2 a été installé à l’aide de la commande suivante :
-```bash
 sudo apt install apache2 -y'''
 
 Présentation
