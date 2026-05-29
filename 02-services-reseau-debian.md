@@ -1,57 +1,39 @@
-## PROJET LINUX DEBIAN 
+# Mise en place des services réseau sous Debian
 
-Mise en place d’une infrastructure Linux complète Explications du Projet - semaine du 4 mai 2026 
+## Introduction
 
-Par Layla Shabi 
+Dans ce projet, nous avons mis en place une machine Debian jouant le rôle de serveur central dans un réseau local. Cette infrastructure permet de simuler un environnement professionnel dans lequel un serveur gère plusieurs services essentiels au bon fonctionnement du réseau.
 
-## **C’est quoi l'infrastructure qu'on a mise en place ?** 
+L’objectif est de comprendre le rôle et l’interaction de ces services dans une architecture Linux réelle, en les configurant et en les reliant entre eux.
 
-Le **serveur Debian** , c’est le chef du réseau. Il gère tout : il distribue les IPs, répond aux noms de domaine, synchronise l'heure, et filtre le trafic. Le truc c’est qu’il lui manque des services pour fonctionner correctement en assurant la protection, l’acces aus ressources, la cohérence, la connexion, la synchronisation de l’heure ect. 
+Au fil des configurations, la machine Debian devient le cœur du réseau, capable d’automatiser la gestion des adresses IP, la résolution de noms, la synchronisation de l’heure, la sécurisation des échanges et le partage de fichiers.
 
-**La logique globale** — chaque service dépend des autres. DNS doit fonctionner pour Kerberos (Samba). NTP doit fonctionner pour que les logs soient cohérents. Le firewall doit laisser passer les bons ports pour que tout communique. C'est une **chaîne** , pas des services indépendants. 
+---
 
-**TCP vs UDP en résumé** — UDP c'est rapide mais sans garantie (DHCP, DNS, NTP), TCP c'est fiable avec vérification de livraison (SSH, FTP, Samba). C'est pourquoi les services critiques utilisent TCP et les services de découverte/temps utilisent UDP. 
+## Objectif du projet
 
-**FTP vs SFTP** — c'est volontairement dans le TP pour montrer le contraste : FTP envoie tout en clair (mot de passe visible sur le réseau !), SFTP chiffre tout. En production, FTP est abandonné au profit de SFTP. 
+L’objectif principal peut se résumer en un mot : **automatisation**.
 
-J'ai déployé un DHCP qui distribue automatiquement les configurations réseau aux clients via le protocole DORA 
+Cela concerne :
+- l’attribution automatique des adresses IP  
+- la résolution automatique des noms de domaine  
+- la synchronisation automatique de l’heure  
+- la sécurisation des accès réseau  
+- le partage de ressources entre machines  
 
-Chrony, pour synchroniser le temps … 
+---
 
-Résumé : 
+## Technologies utilisées
 
-J'ai mis en place un serveur Debian avec une IP statique 192.168.100.107. Sur ce serveur j'ai installé les services réseau de base : DHCP pour distribuer les adresses IP automatiquement, DNS avec bind9 pour la résolution de noms avec une zone locale mondomaine.local, et NTP avec chrony pour synchroniser l'heure. J'ai ensuite sécurisé l'accès avec UFW en appliquant une politique deny par défaut et en n'ouvrant que les ports nécessaires. 
+Les services mis en place sont les suivants :
+- DHCP (attribution des adresses IP)
+- DNS (résolution des noms)
+- NTP (synchronisation de l’heure)
+- UFW (pare-feu)
+- Samba (partage de fichiers)
 
-## Site utilisé : 
 
-- https://debian facile.org/ 
-
-A chaque pré installation, on va faire des apt upgrate et apt upgrade : 
-
-apt update # Rafraîchit la liste des logiciels disponibles 
-
-apt upgrade # Met à jour tous les logiciels déjà installés 
-
-puis les apt install (de bind9, dhcp…) 
-
-systemctl c'est la commande qui **gère tous les services** qui tournent sur ton serveur : 
-
-start – stop – restart -enable -reload – disable 
-
-## ex : systemctl start bind9 
-
-## Organisation 
-
-1. apt install <paquet>        → installer 
-
-2. nano /etc/...               → configurer 
-
-3. systemctl restart <service> → appliquer 
-
-4. systemctl enable <service>  → activer au démarrage 
-
-5. systemctl status <service>  → vérifier 
-
+## DHCP 
 **DHCP** - **isc-dhcp-server (port 67/udp)** 
 
 **C'est quoi ?** Un service qui distribue automatiquement des adresses IP aux machines du réseau. 
@@ -84,9 +66,11 @@ Attention, une IP DHCP n'est pas donnée pour toujours — elle est **louée** p
 
 - Domaine : mondomaine.local 
 
+
+
 ## **DNS BIND9** 
 
-## **bind9 (port 53/tcp et 53/udp)** 
+### **bind9 (port 53/tcp et 53/udp)** 
 
 **C'est quoi ?** Un service qui traduit les noms en IPs (et inversement). 
 
@@ -110,6 +94,8 @@ Expire  604800      → après 7 jours sans contact, la zone expire
 
 - Forwarders : 8.8.8.8 et 1.1.1.1 pour les requêtes externes (Google, YouTube, etc.) 
 
+
+
 ## NTP - chrony (port 123/udp) 
 
 **C'est quoi ?** Un service de synchronisation de l'heure. 
@@ -122,6 +108,8 @@ Expire  604800      → après 7 jours sans contact, la zone expire
 
 - Il est prêt à servir de référence pour les clients du réseau (allow 192.168.100.0/24) 
 
+
+
 ## **Firewall — ufw** 
 
 **C'est quoi ?** Un pare-feu qui contrôle quel trafic est autorisé à entrer sur le serveur. Il fait allow ou deny, selon les règles. 
@@ -133,6 +121,7 @@ Expire  604800      → après 7 jours sans contact, la zone expire
    - Port 80 autorisé ? → OUI → le paquet passe 
 
    - Port 80 autorisé ? → NON → le paquet est droppé (ignoré) 
+
 
 ## **Politique appliquée :** 
 
@@ -172,6 +161,8 @@ Internet (8.8.8.8)
 
 [Client / WSL] reçoit tout du serveur 
 
+
+
 ## SAMBA 
 
 Samba est un logiciel libre qui permet à un serveur Linux de partager des fichiers et des imprimantes avec des machines Windows grâce au protocole SMB. Il est utilisé pour l’interopérabilité dans les réseaux mixtes. Concrètement, il transforme mon serveur Debian en serveur de fichiers compatible Windows. 
@@ -180,5 +171,4 @@ J’ai installé Samba avec apt install samba. J’ai configuré un partage dans
 
 La commande smbpasswd -a utilisateur permet d’ajouter un utilisateur Samba. Il doit déjà exister sur le système Linux. On lui attribue un mot de passe spécifique pour Samba, qui sera utilisé par les clients Windows ou Linux pour accéder aux partages. Ensuite, je peux vérifier avec pdbedit -L que l’utilisateur est bien enregistré 
 
-Une fois connecté avec smbclient, j’ai accès au partage Samba via le prompt smb: \>. Je peux lister les fichiers avec ls, envoyer un fichier avec put, récupérer un fichier avec get, et quitter avec exit. Cela prouve que mon partage Samba est fonctionnel et que l’utilisateur que j’ai créé peut y accéder 
-
+Une fois connecté avec smbclient, j’ai accès au partage Samba via le prompt smb: \>. Je peux lister les fichiers avec ls, envoyer un fichier avec put, récupérer un fichier avec get, et quitter avec exit. Cela prouve que mon partage Samba est fonctionnel et que l’utilisateur que j’ai créé peut y accéder.
