@@ -37,14 +37,14 @@ Le service DHCP fonctionne correctement et attribue des adresses IP dans la plag
 
 
 
-##DNS (Bind9)
+## DNS (Bind9)
 ## Objectif
 Le service DNS permet la résolution des noms de domaine en adresses IP et inversement.
 
-##Installation
+## Installation
     apt install bind9 bind9utils -y
 
-##Configuration
+## Configuration
 
 Les fichiers suivants ont été modifiés :
     /etc/bind/named.conf.options
@@ -55,28 +55,28 @@ Deux zones ont été créées :
     Zone directe : mondomaine.local
     Zone inverse : 100.168.192.in-addr.arpa
 
-###Vérification
+### Vérification
     named-checkconf
     named-checkzone mondomaine.local /etc/bind/zones/mondomaine.local.db
     named-checkzone 100.168.192.in-addr.arpa /etc/bind/zones/192.168.100.rev
 
 ✔ Les fichiers de configuration sont valides
 
-###Test
+### Test
     dig @192.168.100.107 serveur.mondomaine.local
     dig @192.168.100.107 -x 192.168.100.107
 
 ✔ La résolution directe et inverse fonctionne correctement
 
-##NTP (Chrony)
-###Objectif
+## NTP (Chrony)
+### Objectif
 
 Chrony permet la synchronisation de l’heure système avec des serveurs NTP fiables.
 
-###Installation
+### Installation
     apt install chrony -y
 
-###Fonctionnement
+### Fonctionnement
 Le serveur se synchronise avec les sources suivantes :
     time.cloudflare.com
     pool.ntp.org
@@ -85,11 +85,11 @@ La commande chronyc sources permet de vérifier les serveurs utilisés.
 
 ✔ Le serveur Cloudflare est sélectionné comme source principale.
 
-##FIREWALL (UFW)
-###Objectif
+## FIREWALL (UFW)
+### Objectif
 UFW (Uncomplicated Firewall) permet de filtrer les connexions réseau afin de sécuriser le serveur.
 
-###Configuration
+### Configuration
 
 Politique par défaut :
     ufw default deny incoming
@@ -101,21 +101,21 @@ Règles appliquées :
     DNS (53/TCP et UDP)
     NTP (123/UDP)
 
-###Activation
+### Activation
     ufw enable
     ufw status verbose
 
 ✔ Le firewall est actif et protège le serveur
 
 
-###SAMBA
+### SAMBA
 ##Objectif
 Samba permet le partage de fichiers entre systèmes Linux et Windows via le protocole SMB.
 
-##Installation
+## Installation
     apt install samba smbclient -y
 
-##Configuration
+## Configuration
 
 Partage configuré :
     /srv/partage
@@ -123,7 +123,7 @@ Partage configuré :
 Fichier de configuration :
     /etc/samba/smb.conf
 
-##Utilisateur Samba
+## Utilisateur Samba
 
 Un utilisateur système a été créé puis ajouté à Samba :
     adduser utilisateur
